@@ -12,8 +12,8 @@ module com.example.printtest {
     requires com.almasb.fxgl.all;
     requires pdfbox;
     requires java.desktop;
-    requires com.aspose.words;
-
+    requires fr.opensagres.poi.xwpf.converter.pdf;
+    requires poi.ooxml;
 
     opens com.example.printtest to javafx.fxml;
     exports com.example.printtest;

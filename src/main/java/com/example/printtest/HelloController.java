@@ -17,7 +17,10 @@ import javax.print.attribute.standard.Sides;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.printing.PDFPageable;
-import com.aspose.words.*;
+
+import fr.opensagres.poi.xwpf.converter.pdf.PdfOptions;
+import fr.opensagres.poi.xwpf.converter.pdf.PdfConverter;
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -109,8 +112,19 @@ public class HelloController {
     }
 
     private static void wordToPDF(String input, String output, String dir) throws Exception {
-        Document doc = new Document(input);
-        doc.save(dir+"/pdf/"+output);
+        String docPath = input;
+        String pdfPath = dir+"/pdf/"+output;
+
+        try {
+            InputStream doc = new FileInputStream(new File(docPath));
+            XWPFDocument document = new XWPFDocument(doc);
+            PdfOptions options = PdfOptions.create();
+            OutputStream out = new FileOutputStream(new File(pdfPath));
+            PdfConverter.getInstance().convert(document, out, options);
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
+        }
+
 
 //        try {
 //            InputStream templateInputStream = new FileInputStream(input);
