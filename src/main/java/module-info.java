@@ -4,6 +4,7 @@ module com.example.printtest {
     requires javafx.web;
 
     requires org.controlsfx.controls;
+    requires org.apache.poi.xwpf.converter.pdf;
     requires com.dlsc.formsfx;
     requires validatorfx;
     requires org.kordamp.ikonli.javafx;
@@ -12,7 +13,6 @@ module com.example.printtest {
     requires com.almasb.fxgl.all;
     requires pdfbox;
     requires java.desktop;
-    requires fr.opensagres.poi.xwpf.converter.pdf;
     requires poi.ooxml;
 
     opens com.example.printtest to javafx.fxml;
