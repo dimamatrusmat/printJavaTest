@@ -4,9 +4,7 @@ import javafx.fxml.FXML;
 import javafx.print.Printer;
 import javafx.stage.DirectoryChooser;
 
-import org.docx4j.Docx4J;
-import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
-import org.docx4j.openpackaging.parts.WordprocessingML.MainDocumentPart;
+
 import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
 import javafx.scene.control.Button;
@@ -19,6 +17,7 @@ import javax.print.attribute.standard.Sides;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.printing.PDFPageable;
+import com.aspose.words.*;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -52,12 +51,16 @@ public class HelloController {
                 new File(dir+"/pdf").mkdirs();
             }
 
-            arr.forEach((word)
-                            -> wordToPDF(
+            arr.forEach((word) -> {try {
+                     wordToPDF(
                     dir.getAbsolutePath()+"/"+word,
                     word.substring(0, word.length() - 4) + "pdf",
                     dir.getAbsolutePath()
-                    )
+                    );
+                        } catch (Exception e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
             );
 
 //            //Ищем pdf файл
@@ -105,20 +108,25 @@ public class HelloController {
         return arr;
     }
 
-    private static void wordToPDF(String input, String output, String dir){
-        try {
-            InputStream templateInputStream = new FileInputStream(input);
-            WordprocessingMLPackage wordMLPackage = WordprocessingMLPackage.load(templateInputStream);
-            MainDocumentPart documentPart = wordMLPackage.getMainDocumentPart();
+    private static void wordToPDF(String input, String output, String dir) throws Exception {
+        Document doc = new Document(input);
+        doc.save(dir+"/pdf/"+output);
 
-            FileOutputStream os = new FileOutputStream(dir+"/pdf/"+output);
-            Docx4J.toPDF(wordMLPackage,os);
-            os.flush();
-            os.close();
-        } catch (Throwable e) {
+//        try {
+//            InputStream templateInputStream = new FileInputStream(input);
+//            WordprocessingMLPackage wordMLPackage = WordprocessingMLPackage.load(templateInputStream);
+//            MainDocumentPart documentPart = wordMLPackage.getMainDocumentPart();
+//
+//            FileOutputStream os = new FileOutputStream(dir+"/pdf/"+output);
+//            Docx4J.toPDF(wordMLPackage,os);
+//            os.flush();
+//            os.close();
+//        } catch (Throwable e) {
+//
+//            e.printStackTrace();
+//        }
+//
 
-            e.printStackTrace();
-        }
     }
 
     private static void getAllPdfFile(){}

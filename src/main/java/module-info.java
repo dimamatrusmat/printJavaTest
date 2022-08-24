@@ -12,7 +12,7 @@ module com.example.printtest {
     requires com.almasb.fxgl.all;
     requires pdfbox;
     requires java.desktop;
-    requires docx4j.core;
+    requires com.aspose.words;
 
 
     opens com.example.printtest to javafx.fxml;
