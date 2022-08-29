@@ -4,13 +4,6 @@ import javafx.print.Printer;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.printing.PDFPageable;
 
-import org.apache.poi.xwpf.converter.pdf.PdfConverter;
-import org.apache.poi.xwpf.converter.pdf.PdfOptions;
-import org.apache.poi.xwpf.usermodel.XWPFDocument;
-
-import java.io.IOException;
-import java.io.OutputStream;
-
 import javax.print.PrintService;
 import javax.print.PrintServiceLookup;
 import javax.print.attribute.HashPrintRequestAttributeSet;
@@ -18,8 +11,10 @@ import javax.print.attribute.PrintRequestAttributeSet;
 import javax.print.attribute.standard.Sides;
 import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 import java.util.Optional;
+
 
 public class Print {
 
@@ -28,80 +23,56 @@ public class Print {
         String docPath = input;
         String pdfPath = dir + "/pdf/" + output;
 
-        String inputFile = docPath;
-        String outputFile = pdfPath;
-
-        System.out.println("inputFile:" + inputFile + ",outputFile:" + outputFile);
-        FileInputStream in = new FileInputStream(inputFile);
-        XWPFDocument document = new XWPFDocument(in);
-        File outFile = new File(outputFile);
-        OutputStream out = new FileOutputStream(outFile);
-        PdfOptions options = null;
-        PdfConverter.getInstance().convert(document, out, options);
-
-//         POIFSFileSystem fs = null;
-//         Document document = new Document();
+//        try
+//        {
+//            // Load the document
+//            WordDocument wd = new WordDocument(docPath, com.example.printtest.getWordConvertOptions());
 //
-//         try {
-//             System.out.println("Starting the test");
-//             fs = new POIFSFileSystem(new FileInputStream(docPath));
-//
-//             HWPFDocument doc = new HWPFDocument(fs);
-//             WordExtractor we = new WordExtractor(doc);
-//
-//             OutputStream file = new FileOutputStream(new File(pdfPath));
-//
-//             PdfWriter writer = PdfWriter.getInstance(document, file);
-//
-//             org.apache.poi.hwpf.usermodel.Range range = doc.getRange();
-//             document.open();
-//             writer.setPageEmpty(true);
-//             document.newPage();
-//             writer.setPageEmpty(true);
-//
-//             String[] paragraphs = we.getParagraphText();
-//             for (int i = 0; i < paragraphs.length; i++) {
-//
-//                 org.apache.poi.hwpf.usermodel.Paragraph pr = range.getParagraph(i);
-//                 // CharacterRun run = pr.getCharacterRun(i);
-//                 // run.setBold(true);
-//                 // run.setCapitalized(true);
-//                 // run.setItalic(true);
-//                 paragraphs[i] = paragraphs[i].replaceAll("\\cM?\r?\n", "");
-//                 System.out.println("Length:" + paragraphs[i].length());
-//                 System.out.println("Paragraph" + i + ": " + paragraphs[i].toString());
-//
-//                 document.add(new Paragraph(paragraphs[i]));
-//             }
-//
-//             System.out.println("Document testing completed");
-//         } catch (Exception e) {
-//             System.out.println("Exception during test");
-//             e.printStackTrace();
-//         } finally {
-//             // close the document
-//             document.close();
-//         }
-
-
-
+//            // Save the document as a PDF file
+//            wd.saveAsPDF(pdfPath);
+//        }
+//        catch (Throwable t)
+//        {
+//            t.printStackTrace();
+//        }
 //        try {
-//            InputStream templateInputStream = new FileInputStream(input);
-//            WordprocessingMLPackage wordMLPackage = WordprocessingMLPackage.load(templateInputStream);
-//            MainDocumentPart documentPart = wordMLPackage.getMainDocumentPart();
-//
-//            FileOutputStream os = new FileOutputStream(dir+"/pdf/"+output);
-//            Docx4J.toPDF(wordMLPackage,os);
-//            os.flush();
-//            os.close();
-//        } catch (Throwable e) {
-//
+//            InputStream is = new FileInputStream(new File(docPath));
+//            WordprocessingMLPackage wordMLPackage = WordprocessingMLPackage.load(is);
+//            List sections = wordMLPackage.getDocumentModel().getSections();
+//            for (int i = 0; i < sections.size(); i++) {
+//                wordMLPackage.getDocumentModel().getSections().get(i).getPageDimensions();
+//            }
+//            Mapper fontMapper = new IdentityPlusMapper();
+//            wordMLPackage.setFontMapper(fontMapper);
+//            Docx4J.toPDF(wordMLPackage, new FileOutputStream(pdfPath));
+//            System.err.println("Your Word Document Converted to PDF Successfully!");
+//        } catch (Exception e) {
 //            e.printStackTrace();
 //        }
+//        InputStream doc = new FileInputStream(docPath);
+//        ByteArrayOutputStream baos = new ByteArrayOutputStream();
 //
+//        XWPFDocument document = new XWPFDocument(doc);
+//        PdfOptions options = PdfOptions.create();
+//        PdfConverter.getInstance().convert(document, baos, options);
+//        String base64_encoded = Base64.encodeBytes(baos.toByteArray());
+//        System.out.println(base64_encoded);
+//        String inputFile = docPath;
+//        String outputFile = pdfPath;
+
+//        System.out.println("inputFile:" + inputFile + ",outputFile:" + outputFile);
+//        FileInputStream in = new FileInputStream(inputFile);
+//
+//        XWPFDocument document = new XWPFDocument(in);
+//
+//        System.out.println(document.getDocument());
+//
+//        File outFile = new File(outputFile);
+//        OutputStream out = new FileOutputStream(outFile);
+//        PdfOptions options = null;
+//        PdfConverter.getInstance().convert(document, out, options);
+
     }
-
-
 
     static void getAllPdfFile(){}
 
