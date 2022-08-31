@@ -19,10 +19,12 @@ module com.example.printtest {
     requires org.apache.poi.xwpf.converter.pdf;
     requires org.apache.poi.xwpf.converter.core;
     requires poi.ooxml;
-    requires docx4j;
+
 
     requires java.instrument;
-
+    requires itextpdf;
+    requires org.apache.commons.io;
+    requires jacob;
 
 
     opens com.example.printtest to javafx.fxml;

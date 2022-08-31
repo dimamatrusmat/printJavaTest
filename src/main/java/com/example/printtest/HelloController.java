@@ -1,8 +1,11 @@
 package com.example.printtest;
 
 import javafx.fxml.FXML;
+import javafx.print.Printer;
+import javafx.scene.control.ChoiceDialog;
 import javafx.stage.DirectoryChooser;
 import javafx.scene.control.Button;
+import javafx.stage.FileChooser;
 
 
 import java.io.*;
@@ -10,6 +13,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Optional;
+
 public class HelloController {
 
     @FXML
@@ -38,8 +43,7 @@ public class HelloController {
             arr.forEach((word) -> {try {
                      Print.wordToPDF(
                     dir.getAbsolutePath()+"/"+word,
-                    word.substring(0, word.length() - 4) + "pdf",
-                    dir.getAbsolutePath()
+                    dir.getAbsolutePath()+"/pdf/"+word.substring(0, word.length() - 4) + "pdf"
                     );
                         } catch (Exception e) {
                             throw new RuntimeException(e);
