@@ -1,12 +1,8 @@
 package com.example.printtest;
 
-import com.itextpdf.text.*;
-import com.itextpdf.text.pdf.PdfWriter;
 import javafx.print.Printer;
+import org.apache.pdfbox.multipdf.Splitter;
 import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.printing.PDFPageable;
-import org.apache.poi.xwpf.usermodel.XWPFDocument;
-import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 
 import javax.print.PrintService;
 import javax.print.PrintServiceLookup;
@@ -16,6 +12,7 @@ import javax.print.attribute.standard.Sides;
 import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
 import java.io.*;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,14 +20,74 @@ import com.jacob.activeX.ActiveXComponent;
 import com.jacob.com.ComThread;
 import com.jacob.com.Dispatch;
 import com.jacob.com.Variant;
+import org.apache.pdfbox.printing.PDFPageable;
 
 
 public class Print {
 
-    static void getAllPdfFile(){}
+    final static String [] nameFile = new String[] {
+            "Дело", // 0
+            "Экзаменационный лист с фото", // 1
+            "Заявление на поступление", // 2
+            "Согласие на зачисление", // 3
+            "Согласие на обработку персональных данных", // 4
+            "Дог" // 5
+    };
 
-    static void printPDF(Optional<Printer> opt, String name, int duplexMod) {
-        if (opt.isPresent()) {
+    static void getAllPdfFile() {
+    }
+
+    static void createMag(String name, String path) throws IOException {
+        File file = new File(name);
+        PDDocument document = PDDocument.load(file);
+        splitPdf(document, getName(path, nameFile[0]), new int [] {1, 2});
+        splitPdf(document, getName(path, nameFile[1]), new int [] {3, 4});
+        splitPdf(document, getName(path, nameFile[2]), new int [] {5, 6});
+        splitPdf(document, getName(path, nameFile[3]), new int [] {7, 7});
+        splitPdf(document, getName(path, nameFile[4]), new int [] {8, 9});
+        splitPdf(document, getName(path, nameFile[5]), new int [] {10, document.getPages().getCount()});
+
+        document.close();
+    }
+
+    static void createBak(String name, String path) throws IOException {
+        File file = new File(name);
+        PDDocument document = PDDocument.load(file);
+
+        splitPdf(document, getName(path, nameFile[0]), new int [] {1, 2});
+        splitPdf(document, getName(path, nameFile[1]), new int [] {3, 4});
+        splitPdf(document, getName(path, nameFile[2]), new int [] {5, 6});
+        splitPdf(document, getName(path, nameFile[3]), new int [] {7, 7});
+        splitPdf(document, getName(path, nameFile[4]), new int [] {8, 9});
+        splitPdf(document, getName(path, nameFile[5]), new int [] {10, document.getPages().getCount()});
+
+        document.close();
+    }
+
+    static void createSpo(String name, String path) throws IOException {
+        File file = new File(name);
+        PDDocument document = PDDocument.load(file);
+        splitPdf(document, getName(path, nameFile[0]), new int [] {1, 2});
+        splitPdf(document, getName(path, nameFile[2]), new int [] {3, 4});
+        splitPdf(document, getName(path, nameFile[3]), new int [] {5, 5});
+        splitPdf(document, getName(path, nameFile[4]), new int [] {6, 7});
+        splitPdf(document, getName(path, nameFile[5]), new int [] {8, document.getPages().getCount()});
+
+        document.close();
+    }
+
+    static void createOplate(String name, String path) throws IOException {
+        File file = new File(name);
+        PDDocument document = PDDocument.load(file);
+        splitPdf(document, getName(path, "Квитанция"), new int [] {1, 1});
+        document.close();
+    }
+
+
+    static void printPDF(Optional<Printer> opt, String name, int duplexMod, Boolean start) {
+
+
+        if (opt.isPresent() && start) {
             Printer printer = opt.get();
             PrinterJob job = PrinterJob.getPrinterJob();
             try {
@@ -61,7 +118,7 @@ public class Print {
         return null;
     }
 
-    public static void wordToPDF(String docxFilePath, String pdfFile){
+    public static void wordToPDF(String docxFilePath, String pdfFile) {
         System.out.println(docxFilePath);
         System.out.println(pdfFile);
         File docxFile = new File(docxFilePath);
@@ -70,70 +127,48 @@ public class Print {
             if (!docxFile.isDirectory()) {
                 ActiveXComponent app = null;
 
-                long start = System.currentTimeMillis();
                 try {
-                    ComThread.InitMTA(true);
                     app = new ActiveXComponent("Word.Application");
                     Dispatch documents = app.getProperty("Documents").toDispatch();
                     Dispatch document = Dispatch.call(documents, "Open", docxFilePath, false, true).toDispatch();
                     File target = new File(pdfFile);
-                    System.out.println(start);
                     if (target.exists()) {
                         target.delete();
                     }
                     Dispatch.call(document, "SaveAs", pdfFile, 17);
-                    Dispatch.call(document, "Close", false);
-                    long end = System.currentTimeMillis();
-                    System.out.println(end);
+                    Variant f = new Variant(false);
+                    Dispatch.call(document, "Close", f);
+
                 } catch (Exception e) {
                     throw new RuntimeException("pdf convert failed.");
                 } finally {
-                    if (app != null) {
-                        app.invoke("Quit", new Variant[] {});
-                    }
-                    ComThread.Release();
+                    assert app != null;
+                    app.invoke("Quit", new Variant[] {});
                 }
             }
         }
     }
-//
-//    public static void writePdfFile(String output, String file) throws FileNotFoundException, DocumentException {
-//        FileOutputStream fileout = new FileOutputStream(file);
-//        Document document = new Document();
-//        PdfWriter.getInstance(document, fileout);
-//        document.open();
-//        String[] splitter = output.split("\\n");
-//        for (int i = 0; i < splitter.length; i++) {
-//            Chunk chunk = new Chunk(splitter[i]);
-//            Font font = new Font();
-//            font.setStyle(Font.UNDERLINE);
-//            font.setStyle(Font.ITALIC);
-//            chunk.setFont(font);
-//            document.add(chunk);
-//            Paragraph paragraph = new Paragraph();
-//            paragraph.add("");
-//            document.add(paragraph);
-//        }
-//        document.close();
-//
-//    }
-//
-//    public static String readDocxFile(String fileName) {
-//        String output = "";
-//        try {
-//            File file = new File(fileName);
-//            FileInputStream fis = new FileInputStream(file.getAbsolutePath());
-//            XWPFDocument document = new XWPFDocument(fis);
-//            List<XWPFParagraph> paragraphs = document.getParagraphs();
-//            for (XWPFParagraph para : paragraphs) {
-//                output = output + "\n" + para.getText() + "\n";
-//            }
-//            fis.close();
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//        return output;
-//    }
 
+    public static void splitPdf(PDDocument document, String outfile,  int arr []) throws IOException {
+
+        PDDocument pd = new PDDocument();
+
+        if (arr[0] == arr[1]) {
+            pd.addPage(document.getPage(arr[0]-1));
+        } else {
+            for (int i = arr[0] - 1; i <= arr[1] - 1; i ++) {
+                pd.addPage(document.getPage(i));
+            }
+
+        }
+
+        pd.save(outfile);
+        pd.close();
+    }
+
+
+    static String getName(String path, String name) {
+        return path + '/' + name + ".pdf";
+    }
 
 }
